@@ -17,5 +17,9 @@ export default defineConfig({
         manualChunks: undefined,
       }
     }
+  },
+  server: {
+    allowedHosts: ['systematrix.tail2f659b.ts.net'],
+    port: 3000
   }
 })
