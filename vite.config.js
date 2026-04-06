@@ -18,6 +18,9 @@ export default defineConfig({
       }
     }
   },
+  resolve: {
+    dedupe: ['react', 'react-dom']
+  },
   server: {
     allowedHosts: ['buscia.systematrix.com.br'],
     port: 3000,
