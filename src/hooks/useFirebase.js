@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { ref, get, set, onValue, off, push } from 'firebase/database'
-import { db } from '../contexts/AuthContext'
+import { db } from '../lib/firebase'
 import toast from 'react-hot-toast'
 
 /**
