@@ -19,7 +19,11 @@ export default defineConfig({
     }
   },
   resolve: {
-    dedupe: ['react', 'react-dom']
+    dedupe: ['react', 'react-dom'],
+    alias: {
+      'react': 'react',
+      'react-dom': 'react-dom'
+    }
   },
   server: {
     allowedHosts: ['buscia.systematrix.com.br'],
