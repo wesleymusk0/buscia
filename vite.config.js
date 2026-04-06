@@ -19,7 +19,7 @@ export default defineConfig({
     }
   },
   server: {
-    allowedHosts: ['buscia.systematrix.com.br'],
+    allowedHosts: ['systematrix.tail2f659b.ts.net'],
     port: 3000,
     host: '0.0.0.0'
   }
