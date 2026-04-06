@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
-import { getDatabase, ref, set, get } from 'firebase/database'
+import { ref, set, get } from 'firebase/database'
+import { db } from '../lib/firebase'
 import {
   MessageSquare,
   Smartphone,
@@ -89,7 +90,6 @@ function FirstSetup() {
   const saveConfiguration = async () => {
     setLoading(true)
     try {
-      const db = getDatabase()
       const userRef = ref(db, `users/${user.uid}`)
 
       await set(userRef, {
