@@ -1,12 +1,13 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import {
-  getAuth,
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
   createUserWithEmailAndPassword,
   updateProfile
 } from 'firebase/auth'
+import { ref, get, set } from 'firebase/database'
+import toast from 'react-hot-toast'
 import { app, auth, db } from '../lib/firebase'
 
 const AuthContext = createContext()
