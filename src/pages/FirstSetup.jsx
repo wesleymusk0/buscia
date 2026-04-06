@@ -59,21 +59,28 @@ function FirstSetup() {
   }, [step])
 
   const pairAgent = async () => {
-    if (!userData?.schoolId) return
+    const schoolId = userData?.schoolId || user?.uid
+    if (!schoolId) {
+      toast.error('Não foi possível encontrar o ID da escola ou usuário')
+      return
+    }
+
     setLoading(true)
     try {
       const response = await fetch('http://localhost:3001/api/config', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ schoolId: userData.schoolId })
+        body: JSON.stringify({ schoolId })
       })
       const data = await response.json()
       if (data.success) {
         setAgentConfigured(true)
         toast.success('Agente vinculado com sucesso!')
+      } else {
+        toast.error(data.error || 'Erro ao vincular agente local')
       }
     } catch (e) {
-      toast.error('Erro ao vincular agente local')
+      toast.error('Erro ao conectar com o agente local. Verifique se ele está rodando.')
     } finally {
       setLoading(false)
     }
