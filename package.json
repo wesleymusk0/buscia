@@ -9,7 +9,6 @@
     "firebase": "^10.7.0",
     "html2pdf.js": "^0.14.0",
     "lucide-react": "^0.294.0",
-    "opencv-react": "^0.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.1",
