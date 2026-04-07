@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useClasses } from '../hooks/useFirebase'
+import { db } from '../lib/firebase'
 import { ref, push, set, remove } from 'firebase/database'
 import {
   Users,
@@ -13,7 +14,7 @@ import {
 import toast from 'react-hot-toast'
 
 function ManageClasses() {
-  const { userData, db } = useAuth()
+  const { userData } = useAuth()
   const schoolId = userData?.schoolId || 'demo_school'
   const { classes, loading } = useClasses(schoolId)
   
