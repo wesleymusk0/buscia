@@ -16,7 +16,7 @@ import {
 function Dashboard() {
   const navigate = useNavigate()
   const { user, userData } = useAuth()
-  const schoolId = userData?.schoolId || 'demo_school'
+  const schoolId = userData?.schoolId || user?.uid || 'demo_school'
 
   const { classes, loading: classesLoading } = useClasses(schoolId)
   const { stats, loading: statsLoading } = useStatistics(schoolId)
@@ -31,7 +31,7 @@ function Dashboard() {
         setAgentStatus({ 
           connected: true, 
           configured: data.configured,
-          wrongSchool: data.schoolId && data.schoolId !== schoolId
+          wrongSchool: data.schoolId && String(data.schoolId) !== String(schoolId)
         })
       } catch (e) {
         setAgentStatus({ connected: false, configured: false })
