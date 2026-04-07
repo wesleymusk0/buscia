@@ -28,8 +28,8 @@ function Dashboard() {
       try {
         const response = await fetch('http://localhost:3001/health')
         const data = await response.json()
-        setAgentStatus({ 
-          connected: true, 
+        setAgentStatus({
+          connected: true,
           configured: data.configured,
           wrongSchool: data.schoolId && String(data.schoolId) !== String(schoolId)
         })
@@ -74,7 +74,7 @@ function Dashboard() {
               Agente Local não detectado. Ligue o programa na escola.
             </span>
           </div>
-          <button 
+          <button
             onClick={() => window.open('/setup', '_blank')}
             className="text-xs font-bold text-yellow-700 underline"
           >
@@ -89,7 +89,7 @@ function Dashboard() {
               Agente detectado. Clique para vincular a esta escola.
             </span>
           </div>
-          <button 
+          <button
             onClick={() => navigate('/setup')}
             className="px-3 py-1 bg-primary-600 text-white text-xs rounded-lg font-bold"
           >
@@ -131,24 +131,20 @@ function Dashboard() {
               <button
                 key={cls.id}
                 onClick={() => setSelectedClass(cls.id)}
-                className={`p-4 rounded-xl border-2 text-left transition-all ${
-                  selectedClass === cls.id
+                className={`p-4 rounded-xl border-2 text-left transition-all ${selectedClass === cls.id
                     ? 'border-primary-500 bg-primary-50'
                     : 'border-gray-200 hover:border-primary-200'
-                }`}
+                  }`}
               >
                 <div className="flex items-center">
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                    selectedClass === cls.id ? 'bg-primary-200' : 'bg-gray-100'
-                  }`}>
-                    <Users className={`w-5 h-5 ${
-                      selectedClass === cls.id ? 'text-primary-700' : 'text-gray-600'
-                    }`} />
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${selectedClass === cls.id ? 'bg-primary-200' : 'bg-gray-100'
+                    }`}>
+                    <Users className={`w-5 h-5 ${selectedClass === cls.id ? 'text-primary-700' : 'text-gray-600'
+                      }`} />
                   </div>
                   <div className="ml-3">
-                    <p className={`font-semibold ${
-                      selectedClass === cls.id ? 'text-primary-900' : 'text-gray-900'
-                    }`}>
+                    <p className={`font-semibold ${selectedClass === cls.id ? 'text-primary-900' : 'text-gray-900'
+                      }`}>
                       {cls.name}
                     </p>
                     {cls.students && (
@@ -168,11 +164,10 @@ function Dashboard() {
       <button
         onClick={handleStartScan}
         disabled={!selectedClass}
-        className={`w-full py-4 px-6 rounded-xl font-semibold text-lg flex items-center justify-center transition-all ${
-          selectedClass
+        className={`w-full py-4 px-6 rounded-xl font-semibold text-lg flex items-center justify-center transition-all ${selectedClass
             ? 'bg-primary-600 text-white hover:bg-primary-700 shadow-lg hover:shadow-xl'
             : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-        }`}
+          }`}
       >
         <Camera className="w-6 h-6 mr-3" />
         Escanear Faltas

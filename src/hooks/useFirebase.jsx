@@ -66,35 +66,29 @@ export function useClasses(schoolId) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-  if (!schoolId) {
-    setLoading(false)
-    return
-  }
-
-  const classesRef = ref(db, `schools/${schoolId}/classes`)
-
-  const unsubscribe = onValue(classesRef, (snapshot) => {
-    const data = snapshot.val()
-
-    let classesArray = []
-
-    if (data) {
-      classesArray = Object.entries(data).map(([id, classData]) => ({
-        id,
-        ...classData
-      }))
+    if (!schoolId) {
+      setLoading(false)
+      return
     }
 
-    setClasses(prev => {
-      const same = JSON.stringify(prev) === JSON.stringify(classesArray)
-      return same ? prev : classesArray
+    const classesRef = ref(db, `schools/${schoolId}/classes`)
+
+    const unsubscribe = onValue(classesRef, (snapshot) => {
+      const data = snapshot.val()
+      if (data) {
+        const classesArray = Object.entries(data).map(([id, classData]) => ({
+          id,
+          ...classData
+        }))
+        setClasses(classesArray)
+      } else {
+        setClasses([])
+      }
+      setLoading(false)
     })
 
-    setLoading(false)
-  })
-
-  return () => unsubscribe()
-}, [schoolId])
+    return () => unsubscribe()
+  }, [schoolId])
 
   return { classes, loading }
 }
