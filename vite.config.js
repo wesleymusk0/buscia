@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react(), viteSingleFile()],
   build: {
     target: 'esnext',
-    assetsInlineLimit: 100000000, // Forçar inline de todos os assets
+    assetsInlineLimit: 100000000,
     chunkSizeWarningLimit: 100000000,
     cssCodeSplit: false,
     outDir: 'dist',
@@ -16,14 +16,20 @@ export default defineConfig({
       output: {
         manualChunks: undefined,
       }
+    },
+    commonjsOptions: {
+      transformMixedEsModules: true
     }
   },
   resolve: {
-    dedupe: ['react', 'react-dom'],
+    dedupe: ['react', 'react-dom', 'firebase', 'firebase/database'],
     alias: {
       'react': 'react',
       'react-dom': 'react-dom'
     }
+  },
+  optimizeDeps: {
+    exclude: ['firebase', 'firebase/database', 'firebase/app', 'firebase/auth']
   },
   server: {
     allowedHosts: ['buscia.systematrix.com.br'],

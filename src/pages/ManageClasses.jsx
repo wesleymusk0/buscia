@@ -16,7 +16,7 @@ import toast from 'react-hot-toast'
 function ManageClasses() {
   const { userData } = useAuth()
   const schoolId = userData?.schoolId || 'demo_school'
-  const { classes, loading } = useClasses(schoolId)
+  const { classes, loading, error: classesError } = useClasses(schoolId)
   
   // Create / Edit State
   const [isEditing, setIsEditing] = useState(false)
@@ -181,7 +181,11 @@ function ManageClasses() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {loading ? (
+          {classesError ? (
+            <div className="col-span-full text-center py-8 text-red-500">
+              Erro ao carregar turmas. Tente recarregar a página.
+            </div>
+          ) : loading ? (
             <div className="col-span-full text-center py-8 text-gray-500">Buscando turmas...</div>
           ) : classes.length === 0 ? (
             <div className="col-span-full text-center py-12 bg-white rounded-xl border border-gray-200 border-dashed">

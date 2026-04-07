@@ -64,6 +64,7 @@ export function useRealtimeData(path) {
 export function useClasses(schoolId) {
   const [classes, setClasses] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     if (!schoolId) {
@@ -74,23 +75,34 @@ export function useClasses(schoolId) {
     const classesRef = ref(db, `schools/${schoolId}/classes`)
 
     const unsubscribe = onValue(classesRef, (snapshot) => {
-      const data = snapshot.val()
-      if (data) {
-        const classesArray = Object.entries(data).map(([id, classData]) => ({
-          id,
-          ...classData
-        }))
-        setClasses(classesArray)
-      } else {
-        setClasses([])
+      try {
+        const data = snapshot.val()
+        if (data) {
+          const classesArray = Object.entries(data).map(([id, classData]) => ({
+            id,
+            ...classData
+          }))
+          setClasses(classesArray)
+        } else {
+          setClasses([])
+        }
+        setError(null)
+      } catch (err) {
+        console.error('Error processing classes data:', err)
+        setError(err)
+      } finally {
+        setLoading(false)
       }
+    }, (err) => {
+      console.error('Firebase onValue error:', err)
+      setError(err)
       setLoading(false)
     })
 
     return () => unsubscribe()
   }, [schoolId])
 
-  return { classes, loading }
+  return { classes, loading, error }
 }
 
 /**
