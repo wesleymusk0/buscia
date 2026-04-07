@@ -73,25 +73,27 @@ export function useClasses(schoolId) {
 
   const classesRef = ref(db, `schools/${schoolId}/classes`)
 
-  onValue(classesRef, (snapshot) => {
+  const unsubscribe = onValue(classesRef, (snapshot) => {
     const data = snapshot.val()
 
+    let classesArray = []
+
     if (data) {
-      const classesArray = Object.entries(data).map(([id, classData]) => ({
+      classesArray = Object.entries(data).map(([id, classData]) => ({
         id,
         ...classData
       }))
-      setClasses(classesArray)
-    } else {
-      setClasses([])
     }
+
+    setClasses(prev => {
+      const same = JSON.stringify(prev) === JSON.stringify(classesArray)
+      return same ? prev : classesArray
+    })
 
     setLoading(false)
   })
 
-  return () => {
-    off(classesRef) // ✅ remove corretamente o listener
-  }
+  return () => unsubscribe()
 }, [schoolId])
 
   return { classes, loading }
