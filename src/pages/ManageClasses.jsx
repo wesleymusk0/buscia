@@ -45,7 +45,7 @@ function ManageClasses() {
       await remove(ref(db, `schools/${schoolId}/classes/${classId}`))
       toast.success('Turma excluída com sucesso!')
     } catch (error) {
-      console.error(error)
+      console.error('Firebase erro:', error?.message || error)
       toast.error('Erro ao excluir turma')
     }
   }
@@ -96,7 +96,7 @@ function ManageClasses() {
       setClassName('')
       setStudents('')
     } catch (error) {
-      console.error(error)
+      console.error('Firebase erro:', error?.message || error)
       toast.error('Erro ao salvar turma')
     }
   }
