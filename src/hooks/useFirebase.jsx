@@ -52,7 +52,7 @@ export function useRealtimeData(path) {
       setLoading(false)
     })
 
-    return () => off(dataRef, 'value', unsubscribe)
+    return () => unsubscribe()
   }, [path])
 
   return { data, loading }
@@ -87,7 +87,7 @@ export function useClasses(schoolId) {
       setLoading(false)
     })
 
-    return () => off(classesRef, 'value', unsubscribe)
+    return () => unsubscribe()
   }, [schoolId])
 
   return { classes, loading }
@@ -164,7 +164,7 @@ export function useStudents(schoolId, classId) {
       setLoading(false)
     })
 
-    return () => off(studentsRef, 'value', unsubscribe)
+    return () => unsubscribe()
   }, [schoolId, classId])
 
   return { students, loading }
@@ -209,7 +209,7 @@ export function useAbsenceHistory(schoolId, limit = 30) {
       setLoading(false)
     })
 
-    return () => off(absencesRef, 'value', unsubscribe)
+    return () => unsubscribe()
   }, [schoolId, limit])
 
   return { history, loading }
@@ -268,7 +268,7 @@ export function useStatistics(schoolId) {
       setLoading(false)
     })
 
-    return () => off(absencesRef, 'value', unsubscribe)
+    return () => unsubscribe()
   }, [schoolId])
 
   return { stats, loading }
