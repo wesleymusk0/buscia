@@ -66,29 +66,33 @@ export function useClasses(schoolId) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!schoolId) {
-      setLoading(false)
-      return
+  if (!schoolId) {
+    setLoading(false)
+    return
+  }
+
+  const classesRef = ref(db, `schools/${schoolId}/classes`)
+
+  onValue(classesRef, (snapshot) => {
+    const data = snapshot.val()
+
+    if (data) {
+      const classesArray = Object.entries(data).map(([id, classData]) => ({
+        id,
+        ...classData
+      }))
+      setClasses(classesArray)
+    } else {
+      setClasses([])
     }
 
-    const classesRef = ref(db, `schools/${schoolId}/classes`)
+    setLoading(false)
+  })
 
-    const unsubscribe = onValue(classesRef, (snapshot) => {
-      const data = snapshot.val()
-      if (data) {
-        const classesArray = Object.entries(data).map(([id, classData]) => ({
-          id,
-          ...classData
-        }))
-        setClasses(classesArray)
-      } else {
-        setClasses([])
-      }
-      setLoading(false)
-    })
-
-    return () => unsubscribe()
-  }, [schoolId])
+  return () => {
+    off(classesRef) // ✅ remove corretamente o listener
+  }
+}, [schoolId])
 
   return { classes, loading }
 }
