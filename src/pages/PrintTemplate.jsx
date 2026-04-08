@@ -218,10 +218,10 @@ function PrintTemplate() {
             >
               <div className="bg-white rounded h-full flex flex-col relative overflow-hidden">
                 {/* 🌈 Âncoras OMR Cromáticas (Magenta) - Anti-Confusão v4.0 */}
-                <div className="absolute top-0 left-0 w-6 h-6 bg-fuchsia-600 rounded-br" data-omr="tl"></div>
-                <div className="absolute top-0 right-0 w-6 h-6 bg-fuchsia-600 rounded-bl" data-omr="tr"></div>
-                <div className="absolute bottom-0 left-0 w-6 h-6 bg-fuchsia-600 rounded-tr" data-omr="bl"></div>
-                <div className="absolute bottom-0 right-0 w-6 h-6 bg-fuchsia-600 rounded-tl" data-omr="br"></div>
+                <div className="absolute top-0 left-0 w-6 h-6 rounded-br" style={{ backgroundColor: '#ff00ff' }} data-omr="tl"></div>
+                <div className="absolute top-0 right-0 w-6 h-6 rounded-bl" style={{ backgroundColor: '#ff00ff' }} data-omr="tr"></div>
+                <div className="absolute bottom-0 left-0 w-6 h-6 rounded-tr" style={{ backgroundColor: '#ff00ff' }} data-omr="bl"></div>
+                <div className="absolute bottom-0 right-0 w-6 h-6 rounded-tl" style={{ backgroundColor: '#ff00ff' }} data-omr="br"></div>
 
                 {/* 🏷️ Identificação (Cabeçalho Reduzido) */}
                 <div className="text-center p-2 z-10">
