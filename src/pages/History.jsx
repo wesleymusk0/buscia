@@ -17,7 +17,7 @@ import { ptBR } from 'date-fns/locale'
 
 function History() {
   const { userData } = useAuth()
-  const schoolId = userData?.schoolId
+  const schoolId = userData?.schoolId || 'demo_school'
 
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const { history, loading } = useAbsenceHistory(schoolId, 100)
