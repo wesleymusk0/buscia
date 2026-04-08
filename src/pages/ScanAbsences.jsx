@@ -59,9 +59,10 @@ function ScanAbsences() {
     const imgData = ctx.getImageData(0, 0, width, height)
     const data = imgData.data
 
-    const getGreenScore = (x, y) => {
+    const getMagentaScore = (x, y) => {
         const idx = (Math.floor(y)*width + Math.floor(x)) * 4
-        return Math.max(0, data[idx+1] - (data[idx] + data[idx+2]) / 1.5)
+        // Magenta has high Red and Blue, and low Green
+        return Math.max(0, (data[idx] + data[idx+2]) / 2 - data[idx+1] * 1.5)
     }
 
     const getLuma = (x, y) => {
@@ -70,12 +71,12 @@ function ScanAbsences() {
         return (data[idx] * 0.29 + data[idx+1] * 0.58 + data[idx+2] * 0.11)
     }
 
-    // 1. Localizar Âncoras Verdes (Cantos do Papel)
+    // 1. Localizar Âncoras Magenta (Cantos do Papel)
     const findAnchor = (minX, minY, maxX, maxY) => {
       let bS = -1, bP = { x: (minX+maxX)/2, y: (minY+maxY)/2 }
       for (let y = minY+10; y < maxY-10; y += 15) {
         for (let x = minX+10; x < maxX-10; x += 15) {
-          const s = getGreenScore(x, y)
+          const s = getMagentaScore(x, y)
           if (s > bS) { bS = s; bP = { x, y } }
         }
       }
@@ -169,17 +170,17 @@ function ScanAbsences() {
             if (isMarked) detected.push(studentNumber)
 
             // Feedback Visual
-            ctx.strokeStyle = isMarked ? '#10b981' : '#facc15'
+            ctx.strokeStyle = isMarked ? '#d946ef' : '#facc15'
             ctx.lineWidth = isMarked ? 3 : 1
             ctx.strokeRect(finalX - 10, finalY - 10, 20, 20)
-            ctx.fillStyle = isMarked ? '#10b981' : '#facc15'
+            ctx.fillStyle = isMarked ? '#d946ef' : '#facc15'
             ctx.font = 'bold 12px Arial'
             ctx.fillText(studentNumber, finalX, finalY - 14)
         }
     }
 
-    // Desenhar Âncoras Verdes 
-    ctx.fillStyle = '#10b981'
+    // Desenhar Âncoras Magenta
+    ctx.fillStyle = '#d946ef'
     ;[pTL, pTR, pBL, pBR].forEach(p => ctx.fillRect(p.x - 12, p.y - 12, 24, 24))
 
     setCapturedImage(canvas.toDataURL('image/jpeg', 0.8))
@@ -213,8 +214,8 @@ function ScanAbsences() {
 
       {mode === 'camera' && (
         <div className="bg-gray-900 rounded-xl overflow-hidden aspect-[3/4] relative shadow-2xl">
-          <div className="absolute inset-0 border-2 border-emerald-500/30 rounded-lg m-6 aspect-[9.5/13.5] mx-auto z-10 pointer-events-none">
-             <div className="absolute top-2 left-1/2 -translate-x-1/2 text-[10px] text-emerald-400 font-bold bg-gray-900/80 px-2 py-0.5 rounded">MODO HÍBRIDO WARP-HUNTER v7.0</div>
+          <div className="absolute inset-0 border-2 border-fuchsia-500/30 rounded-lg m-6 aspect-[9.5/13.5] mx-auto z-10 pointer-events-none">
+             <div className="absolute top-2 left-1/2 -translate-x-1/2 text-[10px] text-fuchsia-400 font-bold bg-gray-900/80 px-2 py-0.5 rounded">MODO HÍBRIDO WARP-HUNTER v7.0</div>
           </div>
           <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
           <div className="absolute bottom-6 left-0 right-0 flex justify-center z-20">
@@ -225,7 +226,7 @@ function ScanAbsences() {
 
       {mode === 'review' && (
         <div className="space-y-4">
-          <div className="bg-black rounded-xl overflow-hidden aspect-[3/4] border-4 border-emerald-600 shadow-2xl"><img src={capturedImage} className="w-full h-full object-contain" /></div>
+          <div className="bg-black rounded-xl overflow-hidden aspect-[3/4] border-4 border-fuchsia-600 shadow-2xl"><img src={capturedImage} className="w-full h-full object-contain" /></div>
           <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex gap-2">
             <input type="text" value={manualNumbers} onChange={(e) => setManualNumbers(e.target.value)} placeholder="Extras: 5, 12..." className="flex-1 px-4 py-2 border rounded-lg" />
             <button onClick={addManualNumber} className="px-4 py-2 bg-gray-900 text-white rounded-lg"><Check /></button>
@@ -234,14 +235,14 @@ function ScanAbsences() {
             <div className="flex justify-between mb-4"><span className="font-medium text-gray-900">Alunos Faltantes ({detectedNumbers.length})</span><button onClick={handleReset} className="text-sm text-gray-500 hover:text-gray-700 flex items-center"><RotateCcw className="w-4 h-4 mr-1" />Refazer</button></div>
             <div className="grid grid-cols-5 sm:grid-cols-8 gap-2">
               {detectedNumbers.map((num) => (
-                <button key={num} onClick={() => removeNumber(num)} className="group relative p-3 bg-emerald-50 rounded-lg hover:bg-red-50 transition-colors">
-                  <span className="font-bold text-emerald-700 group-hover:text-red-700">{num}</span>
+                <button key={num} onClick={() => removeNumber(num)} className="group relative p-3 bg-fuchsia-50 rounded-lg hover:bg-red-50 transition-colors">
+                  <span className="font-bold text-fuchsia-700 group-hover:text-red-700">{num}</span>
                   <X className="absolute top-1 right-1 w-3 h-3 text-red-500 opacity-0 group-hover:opacity-100" />
                 </button>
               ))}
             </div>
           </div>
-          <button onClick={handleSubmit} disabled={submitting} className="w-full py-4 bg-emerald-600 text-white rounded-xl font-bold shadow-lg hover:bg-emerald-700 transition-all flex items-center justify-center">
+          <button onClick={handleSubmit} disabled={submitting} className="w-full py-4 bg-fuchsia-600 text-white rounded-xl font-bold shadow-lg hover:bg-fuchsia-700 transition-all flex items-center justify-center">
             <Send className="mr-2 w-5 h-5" /> CONFIRMAR FALTAS
           </button>
         </div>
