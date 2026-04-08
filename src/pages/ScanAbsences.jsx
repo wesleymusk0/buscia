@@ -170,17 +170,17 @@ function ScanAbsences() {
             if (isMarked) detected.push(studentNumber)
 
             // Feedback Visual
-            ctx.strokeStyle = isMarked ? '#d946ef' : '#facc15'
+            ctx.strokeStyle = isMarked ? '#ff00ff' : '#facc15'
             ctx.lineWidth = isMarked ? 3 : 1
             ctx.strokeRect(finalX - 10, finalY - 10, 20, 20)
-            ctx.fillStyle = isMarked ? '#d946ef' : '#facc15'
+            ctx.fillStyle = isMarked ? '#ff00ff' : '#facc15'
             ctx.font = 'bold 12px Arial'
             ctx.fillText(studentNumber, finalX, finalY - 14)
         }
     }
 
     // Desenhar Âncoras Magenta
-    ctx.fillStyle = '#d946ef'
+    ctx.fillStyle = '#ff00ff'
     ;[pTL, pTR, pBL, pBR].forEach(p => ctx.fillRect(p.x - 12, p.y - 12, 24, 24))
 
     setCapturedImage(canvas.toDataURL('image/jpeg', 0.8))
