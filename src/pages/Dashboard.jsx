@@ -16,7 +16,7 @@ import {
 function Dashboard() {
   const navigate = useNavigate()
   const { user, userData } = useAuth()
-  const schoolId = userData?.schoolId || user?.uid || 'demo_school'
+  const schoolId = userData?.schoolId || 'demo_school'
 
   const { classes, loading: classesLoading } = useClasses(schoolId)
   const { stats, loading: statsLoading } = useStatistics(schoolId)
