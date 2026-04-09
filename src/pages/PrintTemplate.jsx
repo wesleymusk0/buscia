@@ -21,6 +21,7 @@ function PrintTemplate() {
   const [date, setDate] = useState(new Date().toISOString().split('T')[0])
   const [copies, setCopies] = useState(1)
   const [bubbleSize, setBubbleSize] = useState('medium') // small, medium, large
+  const [isBW, setIsBW] = useState(localStorage.getItem('omrModeBW') === 'true')
 
   const selectedClassData = classes.find(c => c.id === selectedClass)
 
@@ -60,7 +61,7 @@ function PrintTemplate() {
       const script = document.createElement('script')
       script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js'
       document.body.appendChild(script)
-      
+
       await new Promise(resolve => {
         script.onload = resolve
       })
@@ -159,11 +160,10 @@ function PrintTemplate() {
               <button
                 key={size}
                 onClick={() => setBubbleSize(size)}
-                className={`px-4 py-2 rounded-lg border transition-colors ${
-                  bubbleSize === size
+                className={`px-4 py-2 rounded-lg border transition-colors ${bubbleSize === size
                     ? 'bg-primary-100 border-primary-500 text-primary-700'
                     : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-                }`}
+                  }`}
               >
                 {size === 'small' && 'Pequeno (60 números)'}
                 {size === 'medium' && 'Médio (60 números)'}
@@ -171,6 +171,38 @@ function PrintTemplate() {
               </button>
             ))}
           </div>
+        </div>
+
+        {/* Cores ou P&B */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Tipo de Impressão
+          </label>
+          <div className="flex gap-4">
+            <button
+              onClick={() => { setIsBW(false); localStorage.setItem('omrModeBW', 'false') }}
+              className={`flex-1 px-4 py-3 rounded-xl border flex items-center justify-center transition-all ${!isBW
+                  ? 'bg-fuchsia-50 border-fuchsia-500 text-fuchsia-700 shadow-sm'
+                  : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50'
+                }`}
+            >
+              <div className={`w-3 h-3 rounded-full mr-2 ${!isBW ? 'bg-fuchsia-500' : 'bg-gray-300'}`} />
+              Versão Colorida (Magenta)
+            </button>
+            <button
+              onClick={() => { setIsBW(true); localStorage.setItem('omrModeBW', 'true') }}
+              className={`flex-1 px-4 py-3 rounded-xl border flex items-center justify-center transition-all ${isBW
+                  ? 'bg-gray-900 border-gray-900 text-white shadow-lg'
+                  : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50'
+                }`}
+            >
+              <div className={`w-3 h-3 rounded-full mr-2 ${isBW ? 'bg-white' : 'bg-gray-300'}`} />
+              Versão P&B (Preto)
+            </button>
+          </div>
+          <p className="mt-2 text-[11px] text-gray-500">
+            * Use a <strong>Versão P&B</strong> se a sua escola não possui impressora colorida. As âncoras pretas são otimizadas para fotocópias.
+          </p>
         </div>
 
         {/* Botões de ação */}
@@ -214,14 +246,14 @@ function PrintTemplate() {
             <div
               key={copyIndex}
               className="p-4 border-2 border-dashed border-gray-300 print:border-none rounded-xl"
-              style={{ width: '95mm', height: '135mm', breakInside: 'avoid', float: 'left', margin: '5mm' }} 
+              style={{ width: '95mm', height: '135mm', breakInside: 'avoid', float: 'left', margin: '5mm' }}
             >
               <div className="bg-white rounded h-full flex flex-col relative overflow-hidden">
-                {/* 🌈 Âncoras OMR Cromáticas (Magenta) - Anti-Confusão v4.0 */}
-                <div className="absolute top-0 left-0 w-6 h-6 rounded-br" style={{ backgroundColor: '#ff00ff' }} data-omr="tl"></div>
-                <div className="absolute top-0 right-0 w-6 h-6 rounded-bl" style={{ backgroundColor: '#ff00ff' }} data-omr="tr"></div>
-                <div className="absolute bottom-0 left-0 w-6 h-6 rounded-tr" style={{ backgroundColor: '#ff00ff' }} data-omr="bl"></div>
-                <div className="absolute bottom-0 right-0 w-6 h-6 rounded-tl" style={{ backgroundColor: '#ff00ff' }} data-omr="br"></div>
+                {/* 🌈 Âncoras OMR (Híbridas: Colorida/P&B) */}
+                <div className="absolute top-0 left-0 w-6 h-6 rounded-br" style={{ backgroundColor: isBW ? '#000000' : '#ff00ff' }} data-omr="tl"></div>
+                <div className="absolute top-0 right-0 w-6 h-6 rounded-bl" style={{ backgroundColor: isBW ? '#000000' : '#ff00ff' }} data-omr="tr"></div>
+                <div className="absolute bottom-0 left-0 w-6 h-6 rounded-tr" style={{ backgroundColor: isBW ? '#000000' : '#ff00ff' }} data-omr="bl"></div>
+                <div className="absolute bottom-0 right-0 w-6 h-6 rounded-tl" style={{ backgroundColor: isBW ? '#000000' : '#ff00ff' }} data-omr="br"></div>
 
                 {/* 🏷️ Identificação (Cabeçalho Reduzido) */}
                 <div className="text-center p-2 z-10">
@@ -231,21 +263,21 @@ function PrintTemplate() {
 
                 {/* 📐 GRADE ABSOLUTA (v4.6) - Geometria Expandida */}
                 <div className="absolute inset-x-0" style={{ top: '20%', bottom: '20%' }}>
-                   <div className="grid grid-cols-10 h-full gap-2 px-4">
-                      {generateNumbers().map((num) => (
-                        <div
-                          key={num}
-                          className={`${bubbleSize === 'small' ? 'w-5 h-5 text-[10px]' : bubbleSize === 'large' ? 'w-8 h-8 text-sm' : 'w-6 h-6 text-xs'} flex items-center justify-center border border-gray-900 rounded-sm font-bold text-gray-900 bg-white mx-auto self-center`}
-                        >
-                          {num}
-                        </div>
-                      ))}
-                   </div>
+                  <div className="grid grid-cols-10 h-full gap-2 px-4">
+                    {generateNumbers().map((num) => (
+                      <div
+                        key={num}
+                        className={`${bubbleSize === 'small' ? 'w-5 h-5 text-[10px]' : bubbleSize === 'large' ? 'w-8 h-8 text-sm' : 'w-6 h-6 text-xs'} flex items-center justify-center border border-gray-900 rounded-sm font-bold text-gray-900 bg-white mx-auto self-center`}
+                      >
+                        {num}
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 {/* ✍️ Rodapé Absoluto */}
                 <div className="absolute bottom-6 inset-x-4 border-t border-gray-400 pt-1">
-                    <span className="text-[9px] text-gray-600">Ass.: _________________________</span>
+                  <span className="text-[9px] text-gray-600">Ass.: _________________________</span>
                 </div>
               </div>
             </div>
