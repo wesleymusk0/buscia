@@ -20,6 +20,7 @@ function ScanAbsences() {
   const [capturedImage, setCapturedImage] = useState(null)
   const [detectedNumbers, setDetectedNumbers] = useState([])
   const [manualNumbers, setManualNumbers] = useState('')
+  const [isBW, setIsBW] = useState(localStorage.getItem('omrModeBW') === 'true')
   const videoRef = useRef(null)
   const streamRef = useRef(null)
 
@@ -65,6 +66,11 @@ function ScanAbsences() {
         return Math.max(0, (data[idx] + data[idx+2]) / 2 - data[idx+1] * 1.5)
     }
 
+    const getBlackScore = (x, y) => {
+        const luma = getLuma(x, y)
+        return 255 - luma // Quanto mais escuro (menor luma), maior o score
+    }
+
     const getLuma = (x, y) => {
         const idx = (Math.floor(y)*width + Math.floor(x)) * 4
         if (idx < 0 || idx >= data.length) return 255
@@ -74,10 +80,14 @@ function ScanAbsences() {
     // 1. Localizar Âncoras Magenta (Cantos do Papel)
     const findAnchor = (minX, minY, maxX, maxY) => {
       let bS = -1, bP = { x: (minX+maxX)/2, y: (minY+maxY)/2 }
-      for (let y = minY+10; y < maxY-10; y += 15) {
-        for (let x = minX+10; x < maxX-10; x += 15) {
-          const s = getMagentaScore(x, y)
-          if (s > bS) { bS = s; bP = { x, y } }
+      for (let y = minY+15; y < maxY-15; y += 12) {
+        for (let x = minX+15; x < maxX-15; x += 12) {
+          const s = isBW ? getBlackScore(x, y) : getMagentaScore(x, y)
+          if (s > bS) { 
+            // Em P&B, queremos garantir que é um ponto sólido, não apenas ruído
+            if (isBW && s < 180) continue 
+            bS = s; bP = { x, y } 
+          }
         }
       }
       return bP
@@ -179,8 +189,8 @@ function ScanAbsences() {
         }
     }
 
-    // Desenhar Âncoras Magenta
-    ctx.fillStyle = '#ff00ff'
+    // Desenhar Âncoras Feedback
+    ctx.fillStyle = isBW ? '#000000' : '#ff00ff'
     ;[pTL, pTR, pBL, pBR].forEach(p => ctx.fillRect(p.x - 12, p.y - 12, 24, 24))
 
     setCapturedImage(canvas.toDataURL('image/jpeg', 0.8))
@@ -218,6 +228,23 @@ function ScanAbsences() {
              <div className="absolute top-2 left-1/2 -translate-x-1/2 text-[10px] text-fuchsia-400 font-bold bg-gray-900/80 px-2 py-0.5 rounded">MODO HÍBRIDO WARP-HUNTER v7.0</div>
           </div>
           <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+          
+          {/* Seletor Colorido/P&B */}
+          <div className="absolute top-4 right-4 z-20 flex bg-black/50 p-1 rounded-lg backdrop-blur-sm border border-white/20">
+            <button
+               onClick={() => { setIsBW(false); localStorage.setItem('omrModeBW', 'false') }}
+               className={`px-3 py-1.5 rounded-md text-[10px] font-bold transition-all ${!isBW ? 'bg-fuchsia-600 text-white shadow-lg' : 'text-gray-300 hover:text-white'}`}
+            >
+              CORES
+            </button>
+            <button
+               onClick={() => { setIsBW(true); localStorage.setItem('omrModeBW', 'true') }}
+               className={`px-3 py-1.5 rounded-md text-[10px] font-bold transition-all ${isBW ? 'bg-white text-black shadow-lg' : 'text-gray-300 hover:text-white'}`}
+            >
+              P&B (BETA)
+            </button>
+          </div>
+
           <div className="absolute bottom-6 left-0 right-0 flex justify-center z-20">
             <button onClick={capturePhoto} className="w-16 h-16 rounded-full bg-white shadow-lg flex items-center justify-center transition-transform active:scale-95"><div className="w-12 h-12 rounded-full border-4 border-gray-900" /></button>
           </div>
